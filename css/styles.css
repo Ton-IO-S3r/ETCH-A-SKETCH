@@ -1,0 +1,41 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.btn-container{
+    width: 50%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.cmd-btn{
+    width: 100px;
+    height: 20px;
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+}
+.grid-container{
+    width: 800px;
+    height: 800px;
+    margin: 10px auto;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+.single:hover{
+    background-color: blue;
+}
+.single.hovered{
+    background-color: blue;
+}
