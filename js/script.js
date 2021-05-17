@@ -1,99 +1,119 @@
+
 "use strict";
-let squaresN = 16;
-const grid_container = document.querySelector(".grid-container");
-const gridSize = grid_container.clientWidth;
+
+let gridSize = 16;
 let squares, colorCode;
-window.onload = function(){
-    createGrid(grid_container);
-    updateSquares()
-}
-
-
+let hoverCodeStyle=0;
+const grid_container = document.querySelector("#grid-container");
+const square = document.createElement('div');
+const gridWidth = grid_container.clientWidth;
 const clearBtn = document.querySelector("#clear");
-clearBtn.addEventListener('click', function(){
-    squares.forEach(square => square.classList.remove("hovered"))
-    squaresN = prompt('16-64:');
-    resetGrid();
-    createGrid()
-    updateSquares();
-});
-
 const randomBtn = document.querySelector("#random");
-randomBtn.addEventListener('click', function () {
-    squares = document.querySelectorAll(".grid-container div");
-    squares.forEach(square => {
-        square.addEventListener('mouseover', function(){
-            square.removeEventListener('mouseover',bwColor)
-            square.removeEventListener('mouseover',gradualColor)
-            randomColor(square);
-        })
-    })
-});
-
 const bwBtn = document.querySelector("#bw");
-bwBtn.addEventListener('click', function () {
-    squares = document.querySelectorAll(".grid-container div");
-    squares.forEach(square => {
-        square.addEventListener('mouseover', function () {
-            square.removeEventListener('mouseover',randomColor)
-            square.removeEventListener('mouseover',gradualColor)
-            bwColor(square);
-        })
-    })
-});
 const gradualBtn = document.querySelector("#gradual");
-gradualBtn.addEventListener('click', function () {
-    squares = document.querySelectorAll(".grid-container div");
-    squares.forEach(square => {
-        square.addEventListener('mouseover', function(){
-            square.removeEventListener('mouseover',bwColor)
-            square.removeEventListener('mouseover',randomColor)
-            gradualColor(square);
-        })
-    })
+
+
+/* EVENTS */
+window.onload = function(){
+  createGrid(gridSize);
+  styleGrid()
+  setHoverListener(hoverCodeStyle)
+}
+
+clearBtn.addEventListener('click', function(){
+  while (grid_container.firstChild) {
+    grid_container.removeChild(grid_container.firstChild);
+  }
+  gridSize = parseInt(window.prompt('Which grid size do you want to setup: 16-100?'));
+  if (isNaN(gridSize)) {
+    alert('Wrong value, please try again.')
+    return 0  ;
+  } else if (gridSize < 15) {
+    gridSize = 16;
+    alert('Out of limits. Grid will be set to minimum size: 16 x 16')
+  } else if (gridSize >100) {
+    gridSize = 100;
+    alert('Out of limits. Grid will be set to maximum size: 100 x 100')
+  }
+  createGrid(gridSize);
+  styleGrid()
+  setHoverListener(hoverCodeStyle)
+});
+
+bwBtn.addEventListener('click', function(){
+  hoverCodeStyle=0
+  while (grid_container.firstChild) {
+    grid_container.removeChild(grid_container.firstChild);
+  }
+  createGrid(gridSize);
+  styleGrid()
+  setHoverListener(hoverCodeStyle)
+});
+randomBtn.addEventListener('click', function(){
+  hoverCodeStyle=1
+  while (grid_container.firstChild) {
+    grid_container.removeChild(grid_container.firstChild);
+  }
+  createGrid(gridSize);
+  styleGrid()
+  setHoverListener(hoverCodeStyle)
+});
+gradualBtn.addEventListener('click', function(){
+  hoverCodeStyle=2
+  while (grid_container.firstChild) {
+    grid_container.removeChild(grid_container.firstChild);
+  }
+  createGrid(gridSize);
+  styleGrid()
+  setHoverListener(hoverCodeStyle)
 });
 
 
-function updateSquares() {
-    squares = document.querySelectorAll(".grid-container div");
-    squares.forEach(square => {
-        square.classList.add("single");
-        // square.style.border = "1px solid black";
-        square.style.width = gridSize/squaresN + "px";
-        square.style.height = gridSize/squaresN + "px";
-        square.style.boxSizing = "border-box"
-        square.addEventListener('mouseover', function(){bwColor(square)})
-    })
+function createGrid(size) {
+  for (let i = 0; i < (size*size); i++) {
+    grid_container.appendChild(document.createElement('div'))
+  }
 }
-
-function createSquare(parentElement, gridSize) {
-    let square = document.createElement('div');
-    parentElement.appendChild(square);
+function styleGrid(){
+  squares = document.querySelectorAll('#grid-container div');
+  squares.forEach(square => {
+    square.style.width = gridWidth/gridSize + "px";
+    square.style.height = gridWidth/gridSize + "px";
+  })
 }
-
-function createGrid() {
-    for (let i = 0; i < (squaresN*squaresN); i++) {
-        createSquare(grid_container)
+function setHoverListener(hoverStyle) {
+  squares = document.querySelectorAll('#grid-container div');
+  squares.forEach(square => {
+    switch (hoverStyle) {
+      case 0:
+        square.addEventListener('mouseover',()=>{bwColor(square)})
+        break;
+      case 1:
+        square.addEventListener('mouseover',()=>{randomColor(square)})
+        break;
+      case 2:
+        square.style.opacity=0
+        square.addEventListener('mouseover',()=>{grayScaleColor(square)})
+        break;
+      default:
+        break;
     }
+  })
+}
 
-}
-function resetGrid() {
-    while (grid_container.firstChild) {
-        grid_container.removeChild(grid_container.lastChild);
-    }
-}
-function fixColor() {
-    this.classList.add("hovered");
+function bwColor(square) {
+  colorCode = "02182B";
+  square.style.backgroundColor="#"+colorCode;
 }
 function randomColor(square) {
-    colorCode = Math.floor(Math.random()*16777215).toString(16);
-    square.style.backgroundColor="#"+colorCode;
+  colorCode = Math.floor(Math.random()*16777215).toString(16);
+  square.style.backgroundColor="#"+colorCode;
 }
-function bwColor(square) {
-    colorCode = "02182B";
-    square.style.backgroundColor="#"+colorCode;
-}
-function gradualColor(square) {
-    colorCode = "ccc";
-    square.style.backgroundColor="#"+colorCode;
+function grayScaleColor(square) {
+  colorCode = "02182B";
+  square.style.backgroundColor="#"+colorCode;
+  if (parseFloat(square.style.opacity) < 1) {
+    square.style.opacity = (parseFloat(square.style.opacity)+ 0.1).toString();
+  }
+  
 }
